@@ -45,4 +45,5 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefix       = lookup(each.value, "cidr")
   service_endpoints    = lookup(each.value, "service_endpoints")
+  route_table_id       = lookup(each.value, "route_table_id", "")
 }
