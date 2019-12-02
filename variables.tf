@@ -70,6 +70,7 @@ variable "subnets" {
     name              = string
     cidr              = string
     service_endpoints = list(string)
+    route_table_id    = string
   }))
   default = {}
 }
