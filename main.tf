@@ -49,7 +49,11 @@ resource "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_subnet_route_table_association" "route_table_associations" {
-  for_each = toset([for subnet in azurerm_subnet.subnet : subnet if subnet.route_table_id != ""])
+  for_each = {for name, subnet in azurerm_subnet.subnet : 
+    name => {
+    id = subnet.id 
+    route_table_id = subnet.route_table_id
+   } if subnet.route_table_id != ""}
 
   subnet_id      = each.value.id
   route_table_id = each.value.route_table_id
