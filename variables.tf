@@ -80,3 +80,9 @@ variable "route_tables_ids" {
   type        = map(string)
   default     = {}
 }
+
+variable "network_security_groups_ids" {
+  description = "A map of subnet name to Network Security Group ids"
+  type        = map(string)
+  default     = {}
+}
