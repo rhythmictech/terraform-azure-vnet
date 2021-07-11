@@ -67,10 +67,16 @@ variable "ddos_resource_tags" {
 variable "subnets" {
   description = "Map of subnet objects. name, cidr, and service_endpoints supported"
   type = map(object({
-    name              = string
-    cidr              = string
-    service_endpoints = list(string)
-    route_table_id    = string
+    name                                  = string
+    cidr                                  = string
+    enforce_private_link_network_policies = bool
+    service_endpoints                     = list(string)
   }))
   default = {}
+}
+
+variable "route_tables_ids" {
+  description = "A map of subnet name to Route table ids"
+  type        = map(string)
+  default     = {}
 }

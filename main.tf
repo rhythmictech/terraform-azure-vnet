@@ -40,21 +40,25 @@ resource "azurerm_network_ddos_protection_plan" "ddos" {
 
 resource "azurerm_subnet" "subnet" {
   for_each             = var.subnets
-  name                 = lookup(each.value, "name")
-  resource_group_name  = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefix       = lookup(each.value, "cidr")
-  service_endpoints    = lookup(each.value, "service_endpoints")
-  route_table_id       = lookup(each.value, "route_table_id", "")
+
+  name                                           = lookup(each.value, "name")
+  address_prefix                                 = lookup(each.value, "cidr")
+  enforce_private_link_endpoint_network_policies = lookup(each.value, "enforce_private_link_network_policies", false)
+  enforce_private_link_service_network_policies  = lookup(each.value, "enforce_private_link_network_policies", false)
+  resource_group_name                            = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  service_endpoints                              = lookup(each.value, "service_endpoints")
+  virtual_network_name                           = azurerm_virtual_network.vnet.name
+}
+
+locals {
+  azurerm_subnets = {
+    for index, subnet in azurerm_subnet.subnet :
+    subnet.name => subnet.id
+  }
 }
 
 resource "azurerm_subnet_route_table_association" "route_table_associations" {
-  for_each = {for name, subnet in azurerm_subnet.subnet : 
-    name => {
-    id = subnet.id 
-    route_table_id = subnet.route_table_id
-   } if subnet.route_table_id != ""}
-
-  subnet_id      = each.value.id
-  route_table_id = each.value.route_table_id
+  for_each       = var.route_tables_ids
+  route_table_id = each.value
+  subnet_id      = local.azurerm_subnets[each.key]
 }
