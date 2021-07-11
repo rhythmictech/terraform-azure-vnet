@@ -39,7 +39,7 @@ resource "azurerm_network_ddos_protection_plan" "ddos" {
 }
 
 resource "azurerm_subnet" "subnet" {
-  for_each             = var.subnets
+  for_each = var.subnets
 
   name                                           = lookup(each.value, "name")
   address_prefix                                 = lookup(each.value, "cidr")
